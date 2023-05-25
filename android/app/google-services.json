@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "585481478030",
+    "project_id": "mynoting",
+    "storage_bucket": "mynoting.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:585481478030:android:581e3a7c03f0a0ec390edf",
+        "android_client_info": {
+          "package_name": "com.dena.mynote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "585481478030-98de8tcgq9i4a6trcrdrckcgmp9g1aih.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu54ot47kIEdKl91sjJOvXvus3LF24CZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "585481478030-98de8tcgq9i4a6trcrdrckcgmp9g1aih.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "585481478030-7sadd7k58sotu5egc44bhs28j46mhd82.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dena.mynote"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
