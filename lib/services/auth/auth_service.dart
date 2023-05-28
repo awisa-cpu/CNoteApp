@@ -1,5 +1,5 @@
-import 'package:mynote/services/auth/auth_files/auth_provider.dart';
-import 'package:mynote/services/auth/auth_files/auth_user.dart';
+import 'package:mynote/services/auth/auth_provider.dart';
+import 'package:mynote/services/auth/models/auth_user.dart';
 import 'package:mynote/services/auth/providers/firebase_auth_provider.dart';
 
 //the reason for an authService being an AuthProvider is that
