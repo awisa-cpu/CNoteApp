@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:mynote/services/auth/auth_files/auth_user.dart';
-import 'package:mynote/services/auth/auth_files/auth_provider.dart';
-import 'package:mynote/services/auth/auth_files/auth_exceptions.dart';
+import 'package:mynote/services/auth/models/auth_user.dart';
+import 'package:mynote/services/auth/auth_provider.dart';
+import 'package:mynote/services/auth/auth_exceptions.dart';
 
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
@@ -48,7 +48,7 @@ class FirebaseAuthProvider implements AuthProvider {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      AuthUser cUser = AuthUser.fromFirebase(user);
+      AuthUser cUser = AuthUser.fromFirebaseUser(user);
 
       return cUser;
     } else {

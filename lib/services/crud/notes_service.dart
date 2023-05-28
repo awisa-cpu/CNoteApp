@@ -4,7 +4,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' show join;
 
+import 'crud_constants.dart';
 import 'crud_exceptions.dart';
+import 'models/database_note.dart';
+import 'models/database_user.dart';
 
 //the four CRUD operations are to be implemented
 
@@ -14,7 +17,7 @@ class NotesService {
   DatabaseUser? _user;
 
 //it is good for an application not to talk directly with the database instead there should be a
-//layered approach where information are cached from the database and displayed to the user in a collection like list 
+//layered approach where information are cached from the database and displayed to the user in a collection like list
   List<DatabaseNote> _notes = [];
 
   NotesService._sharedInstance() {
@@ -143,15 +146,6 @@ class NotesService {
     }
   }
 
-  //DELETE ALL USERS
-  Future<int> deleteAllUsers() async {
-    await _ensureDbIsOpen();
-    final db = _getDatabaseOrThrow();
-
-    final deletedUsers = await db.delete(userTable);
-    return deletedUsers;
-  }
-
   //FETCH A USER
   Future<DatabaseUser> getUser({required String email}) async {
     await _ensureDbIsOpen();
@@ -170,22 +164,6 @@ class NotesService {
     } else {
       return DatabaseUser.fromRow(usersReturned.first);
     }
-  }
-
-  //FECTH ALL USERS
-  Future<List<DatabaseUser>> getAllUsers() async {
-    await _ensureDbIsOpen();
-    final db = _getDatabaseOrThrow();
-
-    final allReturnedUsers = await db.query(userTable);
-
-    final users = allReturnedUsers
-        .map(
-          (eachUser) => DatabaseUser.fromRow(eachUser),
-        )
-        .toList();
-
-    return users;
   }
 
   //FETCH OR CREATE A USER
@@ -345,87 +323,3 @@ class NotesService {
     }
   }
 }
-
-class DatabaseUser {
-  final int id;
-  final String email;
-
-  const DatabaseUser({
-    required this.id,
-    required this.email,
-  });
-
-  DatabaseUser.fromRow(Map<String, Object?> map)
-      : id = map[idColumn] as int,
-        email = map[emailColumn] as String;
-
-  @override
-  String toString() => 'Person: ID = $id, email = $email';
-
-  @override
-  bool operator ==(covariant DatabaseUser other) => other.id == id;
-
-  @override
-  int get hashCode => id.hashCode;
-}
-
-class DatabaseNote {
-  final int id;
-  final int userId;
-  final String text;
-  final bool isSyncedWithCloud;
-
-  DatabaseNote({
-    required this.id,
-    required this.userId,
-    required this.text,
-    required this.isSyncedWithCloud,
-  });
-
-  DatabaseNote.fromRow(Map<String, Object?> map)
-      : id = map[idColumn] as int,
-        userId = map[userIdColumn] as int,
-        text = map[textColumn] as String,
-        isSyncedWithCloud =
-            (map[isSyncedWithCloudColumn] as int) == 1 ? true : false;
-
-  @override
-  String toString() {
-    return 'DatabaseNote: ID = $id, userId = $userId, isSyncedWithCloud = $isSyncedWithCloud,text = $text, )';
-  }
-
-  @override
-  bool operator ==(covariant DatabaseNote other) {
-    if (identical(this, other)) return true;
-
-    return other.id == id;
-  }
-
-  @override
-  int get hashCode => id.hashCode;
-}
-
-const dbName = 'takingnoteDatabase.db';
-const noteTable = 'note';
-const userTable = 'user';
-const idColumn = 'id';
-const emailColumn = 'email';
-const userIdColumn = 'user_id';
-const textColumn = 'text';
-const isSyncedWithCloudColumn = 'is_synced_with_cloud';
-
-const createUserTable = '''CREATE TABLE IF NOT EXISTS  "user" (
-	    "id"	INTEGER NOT NULL,
-    	"email"	TEXT NOT NULL UNIQUE,
-	    PRIMARY KEY("id" AUTOINCREMENT)
-);
-''';
-const createNoteTable = '''CREATE TABLE IF NOT EXISTS "note" (
-	    "id"	INTEGER NOT NULL,
-    	"user_id"	INTEGER NOT NULL,
-	    "text"	TEXT,
-    	"is_synced_with_cloud"	INTEGER NOT NULL DEFAULT 0,
-	    FOREIGN KEY("user_id") REFERENCES "user"("id"),
-	    PRIMARY KEY("id" AUTOINCREMENT)
-);
-''';
