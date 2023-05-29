@@ -13,15 +13,22 @@ class FirebaseCloudStorage {
   final notes = FirebaseFirestore.instance.collection('notes');
 
   //create new note
-  void createNewNote({required String ownerUserId}) async {
-    await notes.add({
+  Future<CloudNote> createNewNote({required String ownerUserId}) async {
+    final document = await notes.add({
       ownerUserIdFieldName: ownerUserId,
       textFieldName: '',
     });
+
+    final fectchedNotes = await document.get();
+    return CloudNote(
+      documentid: fectchedNotes.id,
+      owneruserId: ownerUserId,
+      text: '',
+    );
   }
 
   //get notes by user id
-  Future<List<CloudNote>> getNotes({required String ownerUserId}) async {
+  Future<Iterable<CloudNote>> getNotes({required String ownerUserId}) async {
     try {
       return await notes
           .where(
@@ -29,26 +36,20 @@ class FirebaseCloudStorage {
             isEqualTo: ownerUserId,
           ) //since a query is returned it must be executed using the get() to return a future of QuerySnapshot
           .get()
-          .then((value) => value.docs.map((doc) {
-                return CloudNote(
-                  documentid: doc.id,
-                  owneruserId: doc.data()[ownerUserIdFieldName] as String,
-                  text: doc.data()[textFieldName] as String,
-                );
-              }).toList());
+          .then(
+              (value) => value.docs.map((doc) => CloudNote.fromSnapshot(doc)));
     } catch (e) {
       throw CouldNotGetAllNotesException();
     }
   }
 
   //all notes for a specific user as it evolves
-  Stream<List<CloudNote>> allNotes({required String ownerUserId}) {
-    //by using the snapshots we are able to listen to changes on this value as it evolves
+  Stream<Iterable<CloudNote>> allNotes({required String ownerUserId}) {
+    //by using the snapshots we are able to listen to changes on this value as it evolves and changes in real-time
     return notes.snapshots().map(
           (query) => query.docs
               .map((doc) => CloudNote.fromSnapshot(doc))
-              .where((note) => note.owneruserId == ownerUserId)
-              .toList(),
+              .where((note) => note.owneruserId == ownerUserId),
         );
   }
 
