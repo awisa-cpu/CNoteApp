@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mynote/constants/routes.dart';
 import 'package:mynote/services/auth/auth_service.dart';
-import 'package:mynote/services/auth/models/auth_user.dart';
 import 'package:mynote/services/cloud/cloud_note.dart';
 import 'package:mynote/services/cloud/firebase_cloud_storage.dart';
 import 'package:mynote/utilities/dialogs/show_logout_dialog.dart';
