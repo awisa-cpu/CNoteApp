@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mynote/services/auth/auth_service.dart';
-import 'package:mynote/services/crud/notes_service.dart';
+import 'package:mynote/services/cloud/firebase_cloud_storage.dart';
 import 'package:mynote/utilities/generics/get_arguments.dart';
 
-import '../../services/crud/models/database_note.dart';
+import '../../services/cloud/cloud_note.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {
   const CreateUpdateNoteView({super.key});
@@ -13,23 +13,19 @@ class CreateUpdateNoteView extends StatefulWidget {
 }
 
 class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
-  DatabaseNote? _note;
-  late final NotesService _notesService;
+  CloudNote? _note;
+  late final FirebaseCloudStorage _notesService;
   late TextEditingController _textController;
 
   @override
   void initState() {
     super.initState();
     _textController = TextEditingController();
-    _notesService = NotesService();
+    _notesService = FirebaseCloudStorage.instance();
   }
 
-  Future<DatabaseNote> _createOrGetExistingNote(BuildContext context) async {
-    //inorder to receive data passed through the navigatorstack
-    // final args = ModalRoute.of(context)?.settings.arguments;
-    // final update = args as DatabaseNote?;
-
-    final widgetNote = context.getArguments<DatabaseNote>();
+  Future<CloudNote> _createOrGetExistingNote(BuildContext context) async {
+    final widgetNote = context.getArguments<CloudNote>();
 
     if (widgetNote != null) {
       _note = widgetNote;
@@ -43,9 +39,8 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     }
 
     final currentUser = AuthService.firebase().currentUser!;
-    final String email = currentUser.email;
-    final owner = await _notesService.getUser(email: email);
-    final newNote = await _notesService.createNote(owner: owner);
+    final userId = currentUser.uid;
+    final newNote = await _notesService.createNewNote(ownerUserId: userId);
     _note = newNote;
     return newNote;
   }
@@ -53,7 +48,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   void _deleteNoteIfTextIsEmpty() async {
     final note = _note;
     if (_textController.text.isEmpty && note != null) {
-      await _notesService.deleteNote(id: note.id);
+      await _notesService.deleteNote(documentid: note.documentid);
     }
   }
 
@@ -62,8 +57,8 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     final text = _textController.text;
     if (note != null && text.isNotEmpty) {
       await _notesService.updateNote(
-        note: note,
-        updateText: text,
+        documentid: note.documentid,
+        text: text,
       );
     }
   }
@@ -76,8 +71,8 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       return;
     }
     await _notesService.updateNote(
-      note: note,
-      updateText: text,
+      documentid: note.documentid,
+      text: text,
     );
   }
 
@@ -114,8 +109,17 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                         const InputDecoration(hintText: 'Start Typing Here'),
                   );
                 default:
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        CircularProgressIndicator(),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text('Loading ...')
+                      ],
+                    ),
                   );
               }
             },

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mynote/constants/routes.dart';
 import 'package:mynote/services/auth/auth_service.dart';
-import 'package:mynote/services/crud/notes_service.dart';
+import 'package:mynote/services/auth/models/auth_user.dart';
+import 'package:mynote/services/cloud/cloud_note.dart';
+import 'package:mynote/services/cloud/firebase_cloud_storage.dart';
 import 'package:mynote/utilities/dialogs/show_logout_dialog.dart';
 import 'package:mynote/views/notes/notes_list_view.dart';
-import '../../services/crud/models/database_note.dart';
 import '../../utilities/enums/menu_action.dart';
 
 class NoteView extends StatefulWidget {
@@ -15,13 +16,14 @@ class NoteView extends StatefulWidget {
 }
 
 class _NoteViewState extends State<NoteView> {
-  late final NotesService _notesService;
-  String get userEmail => AuthService.firebase().currentUser!.email;
+  late final FirebaseCloudStorage _notesService;
+  String get userId => AuthService.firebase().currentUser!.uid;
+  String get email => AuthService.firebase().currentUser!.email;
 
   @override
   void initState() {
     super.initState();
-    _notesService = NotesService();
+    _notesService = FirebaseCloudStorage.instance();
   }
 
   //
@@ -34,7 +36,7 @@ class _NoteViewState extends State<NoteView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                userEmail,
+                email,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const Text(
@@ -82,50 +84,36 @@ class _NoteViewState extends State<NoteView> {
             )
           ],
         ),
-        body: FutureBuilder(
-          future: _notesService.getOrCreateUser(email: userEmail),
+        body: StreamBuilder(
+          stream: _notesService.allNotes(ownerUserId: userId),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
-              //when future is done
-              case ConnectionState.done:
-                return StreamBuilder(
-                  stream: _notesService.allNotes,
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                      case ConnectionState.active:
-                        if (snapshot.hasData) {
-                          final allNotes = snapshot.data as List<DatabaseNote>;
+              case ConnectionState.waiting:
+              case ConnectionState.active:
+                if (snapshot.hasData) {
+                  final allNotes = snapshot.data as Iterable<CloudNote>;
 
-                          return NotesListView(
-                            notes: allNotes,
-                            onDeleteCallback: (note) async {
-                              _notesService.deleteNote(id: note.id);
-                            },
-                            onTapNote: (note) {
-                              Navigator.of(context).pushNamed(
-                                createUpdateNoteRoute,
-                                arguments: note,
-                              );
-                            },
-                          );
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
+                  return NotesListView(
+                    notes: allNotes,
+                    onDeleteCallback: (note) async {
+                      _notesService.deleteNote(documentid: note.documentid);
+                    },
+                    onTapNote: (note) {
+                      Navigator.of(context).pushNamed(
+                        createUpdateNoteRoute,
+                        arguments: note,
+                      );
+                    },
+                  );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-                      //any other stream connection state
-                      default:
-                        return const Center(child: LinearProgressIndicator());
-                    }
-                  },
-                );
-              //Any other connection state
+              //any other stream connection state
               default:
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Center(child: LinearProgressIndicator());
             }
           },
         ),
