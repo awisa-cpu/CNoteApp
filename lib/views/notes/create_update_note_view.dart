@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mynote/services/auth/auth_service.dart';
+import 'package:mynote/services/cloud/cloud_storage_exceptions.dart';
 import 'package:mynote/services/cloud/firebase_cloud_storage.dart';
+import 'package:mynote/utilities/dialogs/cannot_share_empty_note_dialog.dart';
 import 'package:mynote/utilities/generics/get_arguments.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../services/cloud/cloud_note.dart';
 
@@ -94,36 +97,56 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          appBar: AppBar(title: const Text('New Note')),
-          body: FutureBuilder(
-            future: _createOrGetExistingNote(context),
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.done:
-                  _setupTextControllerListener();
-                  return TextField(
-                    controller: _textController,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    decoration:
-                        const InputDecoration(hintText: 'Start Typing Here'),
-                  );
-                default:
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CircularProgressIndicator(),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text('Loading ...')
-                      ],
-                    ),
-                  );
-              }
-            },
-          )),
+        appBar: AppBar(
+          title: const Text('New Note'),
+          actions: [
+            IconButton(
+              onPressed: () async {
+                final text = _textController.text;
+                if (_note == null || text.isEmpty) {
+                  await showCanNotShareEmptyNoteDialog(context);
+                } else {
+                  try {
+                    Share.share(text);
+                  } catch (_) {
+                    throw CouldNotShareNoteException();
+                  }
+                }
+              },
+              icon: const Icon(Icons.share),
+            )
+          ],
+        ),
+        body: FutureBuilder(
+          future: _createOrGetExistingNote(context),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                _setupTextControllerListener();
+                return TextField(
+                  controller: _textController,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration:
+                      const InputDecoration(hintText: 'Start Typing Here'),
+                );
+              default:
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      CircularProgressIndicator(),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text('Loading ...')
+                    ],
+                  ),
+                );
+            }
+          },
+        ),
+      ),
     );
   }
 }
