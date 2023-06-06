@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:mynote/constants/routes.dart';
 import 'package:mynote/services/auth/auth_exceptions.dart';
-import 'package:mynote/services/auth/auth_service.dart';
+import 'package:mynote/services/auth/bloc/auth_bloc.dart';
+import 'package:mynote/services/auth/bloc/auth_event.dart';
 
 import '../utilities/dialogs/error_dialog.dart';
 
@@ -39,6 +41,8 @@ class _LoginViewState extends State<LoginView> {
         title: const Text('Login'),
       ),
       body: Column(children: [
+
+        //
         TextField(
           controller: _email,
           decoration: const InputDecoration(hintText: 'Enter email here'),
@@ -46,6 +50,8 @@ class _LoginViewState extends State<LoginView> {
           enableSuggestions: false,
           keyboardType: TextInputType.emailAddress,
         ),
+
+        //
         TextField(
           controller: _password,
           decoration: InputDecoration(
@@ -65,30 +71,19 @@ class _LoginViewState extends State<LoginView> {
           autocorrect: false,
           enableSuggestions: false,
         ),
+
+        //login button
         TextButton(
           onPressed: () async {
+            final email = _email.text.trim();
+            final password = _password.text.trim();
             try {
-              await _login();
-              final currentUser = AuthService.firebase().currentUser;
-              if (currentUser?.isEmailVerified ?? false) {
-                await Future.delayed(Duration.zero).then(
-                  (_) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      notesRoute,
-                      (route) => false,
-                    );
-                  },
-                );
-              } else {
-                await Future.delayed(Duration.zero).then(
-                  (_) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      verifyEmailRoute,
-                      (route) => false,
-                    );
-                  },
-                );
-              }
+              context.read<AuthBloc>().add(
+                    AuthEventLogIn(
+                      email,
+                      password,
+                    ),
+                  );
             } on UserNotFoundAuthException {
               await showErrorDialog(
                 context,
@@ -113,6 +108,8 @@ class _LoginViewState extends State<LoginView> {
           },
           child: const Text('Login'),
         ),
+       
+       //register button
         TextButton(
           onPressed: () {
             Navigator.of(context).pushNamedAndRemoveUntil(
@@ -123,13 +120,6 @@ class _LoginViewState extends State<LoginView> {
           child: const Text('Not Registered Yet? Register here!'),
         )
       ]),
-    );
-  }
-
-  Future<void> _login() async {
-    await AuthService.firebase().logIn(
-      email: _email.text.trim(),
-      password: _password.text.trim(),
     );
   }
 }
