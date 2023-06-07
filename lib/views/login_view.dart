@@ -5,6 +5,7 @@ import 'package:mynote/constants/routes.dart';
 import 'package:mynote/services/auth/auth_exceptions.dart';
 import 'package:mynote/services/auth/bloc/auth_bloc.dart';
 import 'package:mynote/services/auth/bloc/auth_event.dart';
+import 'package:mynote/services/auth/bloc/auth_state.dart';
 
 import '../utilities/dialogs/error_dialog.dart';
 
@@ -41,7 +42,6 @@ class _LoginViewState extends State<LoginView> {
         title: const Text('Login'),
       ),
       body: Column(children: [
-
         //
         TextField(
           controller: _email,
@@ -73,43 +73,37 @@ class _LoginViewState extends State<LoginView> {
         ),
 
         //login button
-        TextButton(
-          onPressed: () async {
-            final email = _email.text.trim();
-            final password = _password.text.trim();
-            try {
+        BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) async {
+            if (state is AuthStateLoggedOut) {
+              if (state.exception is UserNotFoundAuthException) {
+                await showErrorDialog(context, 'User not found');
+              } else if (state.exception is WrongPasswordAuthException) {
+                await showErrorDialog(context, 'Wrong credentials');
+              } else if (state.exception is InvalidEmailAuthException) {
+                await showErrorDialog(context, 'Email is Invalid');
+              } else {
+                await showErrorDialog(context, 'Authentication Error');
+              }
+            }
+          },
+          child: TextButton(
+            onPressed: () async {
+              final email = _email.text.trim();
+              final password = _password.text.trim();
+
               context.read<AuthBloc>().add(
                     AuthEventLogIn(
                       email,
                       password,
                     ),
                   );
-            } on UserNotFoundAuthException {
-              await showErrorDialog(
-                context,
-                'User Not Found',
-              );
-            } on WrongPasswordAuthException {
-              await showErrorDialog(
-                context,
-                'Wrong Credentials',
-              );
-            } on InvalidEmailAuthException {
-              await showErrorDialog(
-                context,
-                'Invalid Email Entered',
-              );
-            } on GenericAuthException {
-              await showErrorDialog(
-                context,
-                'Error:Authentication Error',
-              );
-            }
-          },
-          child: const Text('Login'),
+            },
+            child: const Text('Login'),
+          ),
         ),
-       
-       //register button
+
+        //register button
         TextButton(
           onPressed: () {
             Navigator.of(context).pushNamedAndRemoveUntil(
