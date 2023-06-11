@@ -9,7 +9,7 @@ import 'package:mynote/views/login_view.dart';
 import 'package:mynote/views/notes/create_update_note_view.dart';
 import 'package:mynote/views/notes/notes_view.dart';
 import 'package:mynote/views/register_view.dart';
-import 'package:mynote/views/verify_emailview.dart';
+import 'package:mynote/views/verify_email_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +19,6 @@ void main() {
       debugShowCheckedModeBanner: false,
       title: 'Note-Take',
       theme: ThemeData(
-        // This is the theme of your application.
         primarySwatch: Colors.blue,
       ),
       home: BlocProvider(
@@ -27,10 +26,6 @@ void main() {
         child: const HomePage(),
       ),
       routes: {
-        loginRoute: (context) => const LoginView(),
-        registerRoute: (context) => const RegisterView(),
-        notesRoute: (context) => const NoteView(),
-        verifyEmailRoute: (context) => const VerifyEmailView(),
         createUpdateNoteRoute: (context) => const CreateUpdateNoteView(),
       },
     ),
@@ -48,15 +43,26 @@ class HomePage extends StatelessWidget {
 
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-       if (state is AuthStateLoggedIn) {
+
+        if (state is AuthStateLoggedIn) {
           return const NoteView();
-        } else if (state is AuthStateNeedsVerification) {
+
+          //
+        } else if (state is AuthStateUserNeedsVerification) {
           return const VerifyEmailView();
+
+          //
         } else if (state is AuthStateLoggedOut) {
           return const LoginView();
+
+          //
+        } else if (state is AuthStateRegistering) {
+          return const RegisterView();
+
+          //
         } else {
           return const Scaffold(
-            body: CircularProgressIndicator(),
+            body: Center(child: CircularProgressIndicator()),
           );
         }
       },
@@ -65,6 +71,7 @@ class HomePage extends StatelessWidget {
 }
 
 //to use later
+/*
 Route onGenerate(RouteSettings settings) {
   return MaterialPageRoute(
     settings: settings,
@@ -94,3 +101,5 @@ Route onGenerate(RouteSettings settings) {
     },
   );
 }
+
+*/
