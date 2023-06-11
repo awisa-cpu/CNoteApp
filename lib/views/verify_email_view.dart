@@ -1,16 +1,11 @@
-
 import 'package:flutter/material.dart';
-import 'package:mynote/constants/routes.dart';
-import 'package:mynote/services/auth/auth_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mynote/services/auth/bloc/auth_bloc.dart';
+import 'package:mynote/services/auth/bloc/auth_event.dart';
 
-class VerifyEmailView extends StatefulWidget {
+class VerifyEmailView extends StatelessWidget {
   const VerifyEmailView({super.key});
 
-  @override
-  State<VerifyEmailView> createState() => _VerifyEmailViewState();
-}
-
-class _VerifyEmailViewState extends State<VerifyEmailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,21 +18,21 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
               "We've sent you an email verification link already, Please open it to verify your account"),
           const Text(
               "If you haven't received a verification email yet, press the button below"),
+
+          //send email verification
           TextButton(
-            onPressed: () async {
-              AuthService.firebase().sendEmailVerification();
+            onPressed: () {
+              context
+                  .read<AuthBloc>()
+                  .add(const AuthEventSendEmailVerification());
             },
             child: const Text('Send Email Verification'),
           ),
+
+          //go back to the login page
           TextButton(
-            onPressed: () async {
-              await AuthService.firebase().logOut();
-              await Future.delayed(Duration.zero).then((_) {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  registerRoute,
-                  (route) => false,
-                );
-              });
+            onPressed: () {
+              context.read<AuthBloc>().add(const AuthEventLogOut());
             },
             child: const Text('Restart'),
           )
