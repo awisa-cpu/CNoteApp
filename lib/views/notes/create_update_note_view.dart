@@ -6,7 +6,7 @@ import 'package:mynote/utilities/dialogs/cannot_share_empty_note_dialog.dart';
 import 'package:mynote/utilities/generics/get_arguments.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../services/cloud/cloud_note.dart';
+import '../../models/cloud/cloud_note.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {
   const CreateUpdateNoteView({super.key});

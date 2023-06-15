@@ -34,7 +34,3 @@ class AuthEventShouldRegister extends AuthEvent{
   const AuthEventShouldRegister();
 }
 
-class AuthEventRoute extends AuthEvent{
-  final String? routeName;
-  const AuthEventRoute(this.routeName);
-}

@@ -1,5 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:mynote/services/auth/models/auth_user.dart';
+import 'package:mynote/models/auth_models/auth_user.dart';
 import 'package:mynote/services/auth/auth_provider.dart';
 import 'package:mynote/services/auth/auth_exceptions.dart';
 

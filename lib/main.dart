@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mynote/constants/routes.dart';
+import 'package:mynote/helpers/loading/loading_screen.dart';
+import 'package:mynote/utilities/constants/routes.dart';
 import 'package:mynote/services/auth/bloc/auth_bloc.dart';
 import 'package:mynote/services/auth/bloc/auth_event.dart';
 import 'package:mynote/services/auth/bloc/auth_state.dart';
@@ -41,7 +42,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(const AuthEventInitialize());
 
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
       builder: (context, state) {
 
         if (state is AuthStateLoggedIn) {
@@ -64,6 +65,13 @@ class HomePage extends StatelessWidget {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
+        }
+      },
+      listener: (context, state) {
+        if(state.isLoading){
+          LoadingScreen().show(context: context, text: state.loadingText??'Please wait a moment');
+        }else{
+          LoadingScreen().hide();
         }
       },
     );

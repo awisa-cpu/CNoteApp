@@ -14,8 +14,12 @@ class VerifyEmailView extends StatelessWidget {
       ),
       body: Column(
         children: [
+
+          //
           const Text(
               "We've sent you an email verification link already, Please open it to verify your account"),
+
+          //
           const Text(
               "If you haven't received a verification email yet, press the button below"),
 

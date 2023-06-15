@@ -1,5 +1,5 @@
 
-import '../crud_constants.dart';
+import '../../services/crud/crud_constants.dart';
 
 class DatabaseUser {
   final int id;

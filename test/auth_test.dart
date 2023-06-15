@@ -1,6 +1,6 @@
 import 'package:mynote/services/auth/auth_exceptions.dart';
 import 'package:mynote/services/auth/auth_provider.dart';
-import 'package:mynote/services/auth/models/auth_user.dart';
+import 'package:mynote/models/auth_models/auth_user.dart';
 import 'package:test/test.dart';
 
 void main() {

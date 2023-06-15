@@ -1,4 +1,4 @@
-import 'package:mynote/services/auth/models/auth_user.dart';
+import 'package:mynote/models/auth_models/auth_user.dart';
 
 //this abstract class  is  dictating an INTERFACE for any authentication provider
 // that we are going to add to our application later in the future

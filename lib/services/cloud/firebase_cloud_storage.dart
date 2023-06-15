@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mynote/services/cloud/cloud_note.dart';
+import 'package:mynote/models/cloud/cloud_note.dart';
 import 'package:mynote/services/cloud/cloud_storage_constants.dart';
 import 'package:mynote/services/cloud/cloud_storage_exceptions.dart';
 

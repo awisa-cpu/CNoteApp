@@ -36,12 +36,10 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
-
       //
       listener: (context, state) async {
-
         if (state is AuthStateRegistering) {
-          if (state.exception is WeakPasswordAuthException) {  
+          if (state.exception is WeakPasswordAuthException) {
             await showErrorDialog(
               context,
               'Weak password',
@@ -105,9 +103,7 @@ class _RegisterViewState extends State<RegisterView> {
             //login view back
             TextButton(
                 onPressed: () {
-                  context
-                      .read<AuthBloc>()
-                      .add(const AuthEventLogOut());
+                  context.read<AuthBloc>().add(const AuthEventLogOut());
                 },
                 child: const Text('Already Registered? Login Here!')),
           ],
