@@ -44,7 +44,6 @@ class HomePage extends StatelessWidget {
 
     return BlocConsumer<AuthBloc, AuthState>(
       builder: (context, state) {
-
         if (state is AuthStateLoggedIn) {
           return const NoteView();
 
@@ -68,9 +67,11 @@ class HomePage extends StatelessWidget {
         }
       },
       listener: (context, state) {
-        if(state.isLoading){
-          LoadingScreen().show(context: context, text: state.loadingText??'Please wait a moment');
-        }else{
+        if (state.isLoading) {
+          LoadingScreen().show(
+              context: context,
+              text: state.loadingText ?? 'Please wait a moment');
+        } else {
           LoadingScreen().hide();
         }
       },
