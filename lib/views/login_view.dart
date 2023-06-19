@@ -41,7 +41,8 @@ class _LoginViewState extends State<LoginView> {
         //
         if (state is AuthStateLoggedOut) {
           if (state.exception is UserNotFoundAuthException) {
-            await showErrorDialog(context, 'User not found');
+            await showErrorDialog(
+                context, 'Cannot find a user with the entered credentails');
           } else if (state.exception is WrongPasswordAuthException) {
             await showErrorDialog(context, 'Wrong credentials');
           } else if (state.exception is InvalidEmailAuthException) {
@@ -55,63 +56,92 @@ class _LoginViewState extends State<LoginView> {
         appBar: AppBar(
           title: const Text('Login'),
         ),
-        body: Column(children: [
-          //
-          TextField(
-            controller: _email,
-            decoration: const InputDecoration(hintText: 'Enter email here'),
-            autocorrect: false,
-            enableSuggestions: false,
-            keyboardType: TextInputType.emailAddress,
-          ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Please log in to your account'),
+              //
+              TextField(
+                controller: _email,
+                decoration: const InputDecoration(hintText: 'Enter email here'),
+                autocorrect: false,
+                autofocus: true,
+                enableSuggestions: false,
+                keyboardType: TextInputType.emailAddress,
+              ),
 
-          //
-          TextField(
-            controller: _password,
-            decoration: InputDecoration(
-              hintText: 'Enter your password',
-              suffixIcon: IconButton(
-                enableFeedback: false,
-                onPressed: () {
-                  shouldShowPassword = !shouldShowPassword;
-                  setState(() {});
-                },
-                icon: Icon(
-                  shouldShowPassword ? Icons.visibility : Icons.visibility_off,
+              //
+              TextField(
+                controller: _password,
+                decoration: InputDecoration(
+                  hintText: 'Enter your password',
+                  suffixIcon: IconButton(
+                    enableFeedback: false,
+                    onPressed: () {
+                      shouldShowPassword = !shouldShowPassword;
+                      setState(() {});
+                    },
+                    icon: Icon(
+                      shouldShowPassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                  ),
+                ),
+                obscureText: shouldShowPassword ? false : true,
+                autocorrect: false,
+                enableSuggestions: false,
+              ),
+
+              //login button
+              Center(
+                child: Column(
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        final email = _email.text.trim();
+                        final password = _password.text.trim();
+              
+                        context.read<AuthBloc>().add(
+                              AuthEventLogIn(
+                                email,
+                                password,
+                              ),
+                            );
+                      },
+                      child: const Text('Login'),
+                    ),
+              
+                    //
+              
+                    //register button
+                    TextButton(
+                      onPressed: () => context.read<AuthBloc>().add(
+                            const AuthEventShouldRegister(),
+                          ),
+                      child: const Text('Not Registered Yet? Register here!'),
+                    ),
+              
+                    //
+                    const SizedBox(
+                      height: 10,
+                    ),
+              
+                    //forgot password button
+                    TextButton(
+                      onPressed: () => context.read<AuthBloc>().add(
+                            const AuthEventForgotPassword(),
+                          ),
+                      child: const Text('Forgot password? '),
+                    )
+                  ],
                 ),
               ),
-            ),
-            obscureText: shouldShowPassword ? false : true,
-            autocorrect: false,
-            enableSuggestions: false,
+            ],
           ),
-
-          //login button
-          TextButton(
-            onPressed: () async {
-              final email = _email.text.trim();
-              final password = _password.text.trim();
-
-              context.read<AuthBloc>().add(
-                    AuthEventLogIn(
-                      email,
-                      password,
-                    ),
-                  );
-            },
-            child: const Text('Login'),
-          ),
-
-          //register button
-          TextButton(
-            onPressed: () {
-              context.read<AuthBloc>().add(
-                    const AuthEventShouldRegister(),
-                  );
-            },
-            child: const Text('Not Registered Yet? Register here!'),
-          )
-        ]),
+        ),
       ),
     );
   }

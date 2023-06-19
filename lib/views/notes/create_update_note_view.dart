@@ -131,10 +131,10 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                       const InputDecoration(hintText: 'Start Typing Here'),
                 );
               default:
-                return Center(
+                return const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       CircularProgressIndicator(),
                       SizedBox(
                         height: 5,
