@@ -13,15 +13,15 @@ abstract class AuthState {
   });
 }
 
-class AuthStateUninitialized extends AuthState {
+class AuthStateUninitialized extends AuthState { 
   const AuthStateUninitialized({required bool isLoading})
       : super(isLoading: isLoading);
 }
 
 class AuthStateRegistering extends AuthState {
   final Exception? exception;
-  const AuthStateRegistering({required this.exception, required bool isLoading})
-      : super(isLoading: isLoading);
+  const AuthStateRegistering({required this.exception, required bool isLoading,String? isloadingText})
+      : super(isLoading: isLoading,loadingText: isloadingText);
 }
 
 class AuthStateLoggedIn extends AuthState {

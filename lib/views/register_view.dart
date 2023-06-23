@@ -18,6 +18,7 @@ class RegisterView extends StatefulWidget {
 class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  bool shouldShowRegisterPassword = false;
 
   @override
   void initState() {
@@ -54,7 +55,7 @@ class _RegisterViewState extends State<RegisterView> {
               context,
               'Invalid email entered',
             );
-          } else {
+          } else if (state.exception is GenericAuthException) {
             await showErrorDialog(
               context,
               'Unable to register',
@@ -84,11 +85,24 @@ class _RegisterViewState extends State<RegisterView> {
               //password
               TextField(
                 controller: _password,
-                obscureText: true,
+                obscureText: shouldShowRegisterPassword ? false : true,
                 enableSuggestions: false,
                 autocorrect: false,
-                decoration:
-                    const InputDecoration(hintText: 'Enter your password'),
+                decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      enableFeedback: false,
+                      onPressed: () {
+                        shouldShowRegisterPassword =
+                            !shouldShowRegisterPassword;
+                        setState(() {});
+                      },
+                      icon: Icon(
+                        shouldShowRegisterPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                    ),
+                    hintText: 'Enter your password'),
               ),
 
               //
@@ -99,14 +113,14 @@ class _RegisterViewState extends State<RegisterView> {
                       onPressed: () {
                         final email = _email.text;
                         final password = _password.text;
-              
+
                         context.read<AuthBloc>().add(
                               AuthEventRegister(email, password),
                             );
                       },
                       child: const Text('Register'),
                     ),
-              
+
                     //login view back
                     TextButton(
                         onPressed: () {

@@ -33,7 +33,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     if (widgetNote != null) {
       _note = widgetNote;
       _textController.text = widgetNote.text;
-      return widgetNote;
+      return widgetNote as CloudNote;
     }
 
     final existingNote = _note;

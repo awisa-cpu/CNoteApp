@@ -18,7 +18,7 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
-  bool shouldShowPassword = false;
+  bool shouldShowLoginPassword = false;
 
   @override
   void initState() {
@@ -62,6 +62,10 @@ class _LoginViewState extends State<LoginView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Please log in to your account'),
+
+              const SizedBox(
+                height: 20.5,
+              ),
               //
               TextField(
                 controller: _email,
@@ -80,17 +84,17 @@ class _LoginViewState extends State<LoginView> {
                   suffixIcon: IconButton(
                     enableFeedback: false,
                     onPressed: () {
-                      shouldShowPassword = !shouldShowPassword;
+                      shouldShowLoginPassword = !shouldShowLoginPassword;
                       setState(() {});
                     },
                     icon: Icon(
-                      shouldShowPassword
+                      shouldShowLoginPassword
                           ? Icons.visibility
                           : Icons.visibility_off,
                     ),
                   ),
                 ),
-                obscureText: shouldShowPassword ? false : true,
+                obscureText: shouldShowLoginPassword ? false : true,
                 autocorrect: false,
                 enableSuggestions: false,
               ),
@@ -103,7 +107,7 @@ class _LoginViewState extends State<LoginView> {
                       onPressed: () async {
                         final email = _email.text.trim();
                         final password = _password.text.trim();
-              
+
                         context.read<AuthBloc>().add(
                               AuthEventLogIn(
                                 email,
@@ -113,9 +117,9 @@ class _LoginViewState extends State<LoginView> {
                       },
                       child: const Text('Login'),
                     ),
-              
+
                     //
-              
+
                     //register button
                     TextButton(
                       onPressed: () => context.read<AuthBloc>().add(
@@ -123,12 +127,12 @@ class _LoginViewState extends State<LoginView> {
                           ),
                       child: const Text('Not Registered Yet? Register here!'),
                     ),
-              
+
                     //
                     const SizedBox(
                       height: 10,
                     ),
-              
+
                     //forgot password button
                     TextButton(
                       onPressed: () => context.read<AuthBloc>().add(
