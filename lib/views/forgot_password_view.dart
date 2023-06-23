@@ -40,8 +40,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           }
 
           if (state.exception != null) {
-            await showErrorDialog(context,
-                'we could not process your request, make sure you are registered');
+            Future.delayed(Duration.zero).then((_) async {
+              await showErrorDialog(context,
+                  'we could not process your request, make sure you are registered');
+            });
           }
         }
       },
@@ -78,7 +80,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               TextButton(
                 onPressed: () => context
                     .read<AuthBloc>()
-                    .add(AuthEventForgotPassword(email:_emailController.text)),
+                    .add(AuthEventForgotPassword(email: _emailController.text)),
                 child: const Text(
                   'Send me password reset link',
                 ),
