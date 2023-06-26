@@ -67,7 +67,19 @@ class HomePage extends StatelessWidget {
           //
         } else {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                  Text('Processing ...')
+                ],
+              ),
+            ),
           );
         }
       },
@@ -83,37 +95,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-//to use later
-/*
-Route onGenerate(RouteSettings settings) {
-  return MaterialPageRoute(
-    settings: settings,
-    builder: (context) {
-      switch (settings.name) {
-        case HomePage.homePage:
-          return const HomePage();
-        case loginRoute:
-          return const LoginView();
-        case registerRoute:
-          return const RegisterView();
-        case notesRoute:
-          return const NoteView();
-        case verifyEmailRoute:
-          return const VerifyEmailView();
-        default:
-          return Scaffold(
-            appBar: AppBar(),
-            body: const Center(
-              child: Text(
-                'Page not found',
-                style: TextStyle(fontSize: 23.0),
-              ),
-            ),
-          );
-      }
-    },
-  );
-}
-
-*/
