@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:mynote/services/auth/auth_exceptions.dart';
 import 'package:mynote/services/auth/bloc/auth_bloc.dart';
 import 'package:mynote/services/auth/bloc/auth_event.dart';
 import 'package:mynote/services/auth/bloc/auth_state.dart';
+import 'package:mynote/utilities/extensions/buildcontext/local.dart';
 
 import '../utilities/dialogs/error_dialog.dart';
 
@@ -42,26 +42,37 @@ class _LoginViewState extends State<LoginView> {
         if (state is AuthStateLoggedOut) {
           if (state.exception is UserNotFoundAuthException) {
             await showErrorDialog(
-                context, 'Cannot find a user with the entered credentails');
+              context,
+              context.loc.login_error_cannot_find_user,
+            );
           } else if (state.exception is WrongPasswordAuthException) {
-            await showErrorDialog(context, 'Wrong credentials');
+            await showErrorDialog(
+              context,
+              context.loc.login_error_wrong_credentials,
+            );
           } else if (state.exception is InvalidEmailAuthException) {
-            await showErrorDialog(context, 'Email is Invalid');
+            await showErrorDialog(
+              context,
+              context.loc.login_error_invalid_email,
+            );
           } else if (state.exception is GenericAuthException) {
-            await showErrorDialog(context, 'Authentication Error');
+            await showErrorDialog(
+              context,
+              context.loc.login_error_auth_error,
+            );
           }
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Login'),
+          title: Text(context.loc.login),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Please log in to your account'),
+              Text(context.loc.login_view_prompt),
 
               const SizedBox(
                 height: 20.5,
@@ -69,7 +80,8 @@ class _LoginViewState extends State<LoginView> {
               //
               TextField(
                 controller: _email,
-                decoration: const InputDecoration(hintText: 'Enter email here'),
+                decoration: InputDecoration(
+                    hintText: context.loc.email_text_field_placeholder),
                 autocorrect: false,
                 autofocus: true,
                 enableSuggestions: false,
@@ -80,7 +92,7 @@ class _LoginViewState extends State<LoginView> {
               TextField(
                 controller: _password,
                 decoration: InputDecoration(
-                  hintText: 'Enter your password',
+                  hintText: context.loc.password_text_field_placeholder,
                   suffixIcon: IconButton(
                     enableFeedback: false,
                     onPressed: () {
@@ -115,7 +127,7 @@ class _LoginViewState extends State<LoginView> {
                               ),
                             );
                       },
-                      child: const Text('Login'),
+                      child: Text(context.loc.login),
                     ),
 
                     //
@@ -125,7 +137,7 @@ class _LoginViewState extends State<LoginView> {
                       onPressed: () => context.read<AuthBloc>().add(
                             const AuthEventShouldRegister(),
                           ),
-                      child: const Text('Not Registered Yet? Register here!'),
+                      child: Text(context.loc.not_registered),
                     ),
 
                     //
@@ -138,7 +150,7 @@ class _LoginViewState extends State<LoginView> {
                       onPressed: () => context.read<AuthBloc>().add(
                             const AuthEventForgotPassword(),
                           ),
-                      child: const Text('Forgot password? '),
+                      child: Text(context.loc.forgot_password),
                     )
                   ],
                 ),

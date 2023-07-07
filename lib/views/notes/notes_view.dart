@@ -7,8 +7,11 @@ import 'package:mynote/services/auth/bloc/auth_event.dart';
 import 'package:mynote/models/cloud/cloud_note.dart';
 import 'package:mynote/services/cloud/firebase_cloud_storage.dart';
 import 'package:mynote/utilities/dialogs/show_logout_dialog.dart';
+import 'package:mynote/utilities/extensions/buildcontext/local.dart';
+import 'package:mynote/utilities/extensions/stream/iterable_length.dart';
 import 'package:mynote/views/notes/notes_list_view.dart';
 import '../../utilities/enums/menu_action.dart';
+
 
 class NoteView extends StatefulWidget {
   const NoteView({super.key});
@@ -40,9 +43,18 @@ class _NoteViewState extends State<NoteView> {
               email,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            const Text(
-              'Your Notes ',
-              style: TextStyle(fontSize: 15),
+            StreamBuilder(
+              stream: _notesService.allNotes(ownerUserId: userId).getLength,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final noteLength = snapshot.data ?? 0;
+                  final text = context.loc.notes_title(noteLength);
+
+                  return Text(text);
+                } else {
+                  return const Text('');
+                }
+              },
             ),
           ],
         ),
@@ -57,10 +69,10 @@ class _NoteViewState extends State<NoteView> {
           PopupMenuButton<MenuAction>(
             enableFeedback: false,
             itemBuilder: (context) {
-              return const [
+              return [
                 PopupMenuItem<MenuAction>(
                   value: MenuAction.logout,
-                  child: Text('Log Out'),
+                  child: Text(context.loc.logout_button),
                 ),
               ];
             },

@@ -1,13 +1,13 @@
 // import 'dart:async';
-// import 'package:mynote/extensions/list/filter.dart';
+// import 'package:mynote/utilities/extensions/list/filter.dart';
 // import 'package:path_provider/path_provider.dart';
 // import 'package:sqflite/sqflite.dart';
 // import 'package:path/path.dart' show join;
 
+// import '../../models/crud_models/database_note.dart';
+// import '../../models/crud_models/database_user.dart';
 // import 'crud_constants.dart';
 // import 'crud_exceptions.dart';
-// import 'models/database_note.dart';
-// import 'models/database_user.dart';
 
 // //the four CRUD operations are to be implemented
 

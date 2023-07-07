@@ -3,7 +3,8 @@ import 'package:mynote/services/auth/auth_service.dart';
 import 'package:mynote/services/cloud/cloud_storage_exceptions.dart';
 import 'package:mynote/services/cloud/firebase_cloud_storage.dart';
 import 'package:mynote/utilities/dialogs/cannot_share_empty_note_dialog.dart';
-import 'package:mynote/utilities/generics/get_arguments.dart';
+import 'package:mynote/utilities/extensions/buildcontext/local.dart';
+import 'package:mynote/utilities/extensions/buildcontext/get_arguments.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../models/cloud/cloud_note.dart';
@@ -98,7 +99,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('New Note'),
+          title: Text(context.loc.note),
           actions: [
             IconButton(
               onPressed: () async {
@@ -127,19 +128,20 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                   controller: _textController,
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
-                  decoration:
-                      const InputDecoration(hintText: 'Start Typing Here'),
+                  decoration: InputDecoration(
+                    hintText: context.loc.start_typing_your_note,
+                  ),
                 );
               default:
-                return const Center(
+                return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CircularProgressIndicator(),
-                      SizedBox(
+                      const CircularProgressIndicator(),
+                      const SizedBox(
                         height: 5,
                       ),
-                      Text('Loading ...')
+                      Text(context.loc.loading)
                     ],
                   ),
                 );

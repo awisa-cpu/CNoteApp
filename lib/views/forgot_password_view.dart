@@ -5,6 +5,7 @@ import 'package:mynote/services/auth/bloc/auth_event.dart';
 import 'package:mynote/services/auth/bloc/auth_state.dart';
 import 'package:mynote/utilities/dialogs/error_dialog.dart';
 import 'package:mynote/utilities/dialogs/password_reset_email_dialog.dart';
+import 'package:mynote/utilities/extensions/buildcontext/local.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -41,22 +42,21 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
           if (state.exception != null) {
             Future.delayed(Duration.zero).then((_) async {
-              await showErrorDialog(context,
-                  'we could not process your request, make sure you are registered');
+              await showErrorDialog(
+                  context, context.loc.forgot_password_view_generic_error);
             });
           }
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Forgot password'),
+          title: Text(context.loc.forgot_password),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              const Text(
-                  'if you have forgotten password, please enter email below'),
+              Text(context.loc.forgot_password_view_prompt),
 
               //
               const SizedBox(
@@ -68,8 +68,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 autocorrect: false,
                 autofocus: true,
                 keyboardType: TextInputType.emailAddress,
-                decoration:
-                    const InputDecoration(hintText: 'Your email address'),
+                decoration: InputDecoration(
+                    hintText: context.loc.email_text_field_placeholder),
               ),
 
               //
@@ -81,8 +81,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 onPressed: () => context
                     .read<AuthBloc>()
                     .add(AuthEventForgotPassword(email: _emailController.text)),
-                child: const Text(
-                  'Send me password reset link',
+                child: Text(
+                  context.loc.forgot_password_view_send_me_link,
                 ),
               ),
 
@@ -94,8 +94,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               TextButton(
                 onPressed: () =>
                     context.read<AuthBloc>().add(const AuthEventLogOut()),
-                child: const Text(
-                  'Back to login page',
+                child: Text(
+                  context.loc.forgot_password_view_back_to_login,
                 ),
               ),
             ],
